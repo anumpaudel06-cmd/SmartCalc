@@ -21,7 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Setup Java JDK
         uses: actions/setup-java@v4
@@ -33,26 +32,13 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install Web Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Web Application
         run: npm run build
 
-      - name: Install & Configure Capacitor Android
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap add android
-          npx cap sync android
-
-      - name: Ensure Android Permissions
-        run: |
-          # Add Internet and Vibration permissions to AndroidManifest if not already present
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          if [ -f "$MANIFEST" ]; then
-            sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
-            sed -i '/<application/i \    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' "$MANIFEST"
-            sed -i '/<application/i \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST"
-          fi
+      - name: Sync Capacitor Android
+        run: npx cap sync android
 
       - name: Build Android Debug APK
         run: |
@@ -73,7 +59,7 @@ jobs:
           path: release-apk/SmartCalc.apk
           retention-days: 30
 
-      - name: Create GitHub Release with APK
+      - name: Create or Update GitHub Release with APK
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
@@ -82,7 +68,7 @@ jobs:
           body: |
             ### 📱 Samsung One UI SmartCalc Android APK
             
-            This release contains the standalone installable Android APK for **SmartCalc** (Samsung One UI Calculator + Unit & Smart Currency Converter).
+            Standalone installable Android APK for **SmartCalc** (Samsung One UI Calculator + Unit & Smart Currency Converter).
             
             #### Features Included:
             - Exact Samsung One UI 6.1 Look and Feel
