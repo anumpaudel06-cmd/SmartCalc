@@ -1,0 +1,6 @@
+{
+  "name": "Samsung Calculator",
+  "description": "An exact 1:1 Samsung One UI Calculator clone with full multi-unit conversion and smart live currency exchange rates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
