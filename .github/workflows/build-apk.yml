@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Setup Java JDK 17
+      - name: Setup Java JDK 21 (for Capacitor 7)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Install Web Dependencies
         run: npm install --legacy-peer-deps
