@@ -2,7 +2,16 @@
 
 A pixel-perfect, 1:1 recreation of the Samsung Calculator (One UI 6.1) built with **React 19**, **TypeScript**, and **Tailwind CSS**, featuring full multi-category unit conversions and a smart live currency converter with offline rate persistence.
 
-![Samsung One UI Calculator Preview](https://raw.githubusercontent.com/placeholder/samsung-calculator-preview.png)
+[![Download Android APK](https://img.shields.io/badge/Download_APK-SmartCalc.apk-27ae60?style=for-the-badge&logo=android&logoColor=white)](https://github.com/anumpaudel06-cmd/SmartCalc/releases/latest/download/SmartCalc.apk)
+[![GitHub Release](https://img.shields.io/github/v/release/anumpaudel06-cmd/SmartCalc?style=for-the-badge&color=blue)](https://github.com/anumpaudel06-cmd/SmartCalc/releases)
+
+---
+
+## 📱 Download & Install Android APK
+You can install SmartCalc directly on your Android phone:
+1. Go to [**Releases**](https://github.com/anumpaudel06-cmd/SmartCalc/releases) or click [**Download SmartCalc.apk**](https://github.com/anumpaudel06-cmd/SmartCalc/releases/latest/download/SmartCalc.apk).
+2. Open the downloaded `.apk` file on your Android device.
+3. Allow "Install from unknown sources" if prompted, then tap **Install**.
 
 ---
 

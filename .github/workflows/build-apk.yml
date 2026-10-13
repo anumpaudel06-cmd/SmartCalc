@@ -1,0 +1,98 @@
+name: Build & Publish Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build SmartCalc APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Web Dependencies
+        run: npm install
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Install & Configure Capacitor Android
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap add android
+          npx cap sync android
+
+      - name: Ensure Android Permissions
+        run: |
+          # Add Internet and Vibration permissions to AndroidManifest if not already present
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
+            sed -i '/<application/i \    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' "$MANIFEST"
+            sed -i '/<application/i \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST"
+          fi
+
+      - name: Build Android Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Copy & Rename APK
+        run: |
+          mkdir -p release-apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-apk/SmartCalc.apk
+          cp release-apk/SmartCalc.apk SmartCalc.apk
+
+      - name: Upload APK as Workflow Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartCalc-Android-APK
+          path: release-apk/SmartCalc.apk
+          retention-days: 30
+
+      - name: Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: v1.0.0
+          name: "SmartCalc Android App v1.0.0 (APK)"
+          body: |
+            ### 📱 Samsung One UI SmartCalc Android APK
+            
+            This release contains the standalone installable Android APK for **SmartCalc** (Samsung One UI Calculator + Unit & Smart Currency Converter).
+            
+            #### Features Included:
+            - Exact Samsung One UI 6.1 Look and Feel
+            - 4 Utility icons: History, Ruler, Smart Currency, and Backspace
+            - Complete Unit Converter (Length, Area, Mass, Temp, Volume, Data, Speed, Time)
+            - Smart Currency Converter with 12:00 AM auto-fetch and offline caching
+            - Haptic vibration and sound feedback
+            
+            #### 📥 Download:
+            Download and install **[SmartCalc.apk](https://github.com/anumpaudel06-cmd/SmartCalc/releases/download/v1.0.0/SmartCalc.apk)** on any Android device.
+          files: release-apk/SmartCalc.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
